@@ -16,16 +16,38 @@
     // main function with a scoped jQuery object
     function main($) {
 
+        setInterval(function(){
+
+            var frames = document.querySelectorAll('iframe[id^=gtn_]');
+
+            var shouldBadge = false;
+            // if we see any green windows, we need to apply a badge to the icon
+            for (var i = 0; i < frames.length; i++) {
+                var frame = frames.item(i);
+                // .Ik.uB means the title is green
+                if(frame.contentWindow.document.querySelector(".Ik.uB"))
+                {
+                    shouldBadge = true;
+                }
+            }
+
+            if (shouldBadge) {
+                window.fluid.dockBadge = '\u2022';
+            } else {
+                window.fluid.dockBadge = '';
+            }
+        }, 1000)
+
         function scanForFrames() {
             // chat frame ids start with "gtn_"
             var frames = document.querySelectorAll('iframe[id^=gtn_]');
+
             for (var i = 0; i < frames.length; i++) {
                 var frame = frames.item(i);
-
                 // If we're not already observing on this frame
                 if (!frame.hasOwnProperty("_fluidObserver")) {
-                    // Name is in class="Ob2Lud RE EIhiV OxDpJ"
-                    var nameNode = frame.contentWindow.document.querySelector(".Ob2Lud.RE.EIhiV.OxDpJ");
+                    // Name is in class="Ob2Lud RE EIhiV"
+                    var nameNode = frame.contentWindow.document.querySelector(".Ob2Lud.RE.EIhiV");
                     var name = nameNode.textContent.split(" ")[0];
 
                     // add the observer to "_fluidObserver" on the frame
@@ -36,7 +58,7 @@
 
                             // "tL8wMe xAWnQc" is a message div
                             // a parent with class "Sn" means it's their message (not ours)
-                            if ($node.hasClass("tL8wMe") && $node.hasClass("xAWnQc") && $node.parents(".Sn").length > 0) {
+                            if ($node.hasClass("tL8wMe") && $node.hasClass("EMoHub") && $node.parents(".Sn").length > 0) {
                                 var notification = new Notification(name, {
                                     body: $node.text()
                                 });
